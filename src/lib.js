@@ -38,6 +38,16 @@
     return Promise.all([api.storage.local.set(set), del.length && api.storage.local.remove(del)]);
   }
 
+  // Firefox asks the user before an add-on sends data out of the browser (data_collection_permissions in
+  // build.mjs); gist sync is the only thing that does. Chromium has no such consent, so nothing to ask there.
+  const sends = () => api.runtime.getManifest().browser_specific_settings?.gecko?.data_collection_permissions?.optional ?? [];
+  // Call straight from a click, before any await: Firefox only shows its prompt in response to one.
+  const askToSend = () => sends().length ? api.permissions.request({ data_collection: sends() }) : Promise.resolve(true);
+  async function maySend() {
+    const { data_collection: granted = [] } = sends().length ? await api.permissions.getAll() : {};
+    return sends().every(c => granted.includes(c));
+  }
+
   // Every User object in a GraphQL response, wherever it sits.
   function extractUsers(json) {
     const out = new Map();
@@ -101,5 +111,5 @@
     return { merged, toLocal, dirty };
   }
 
-  globalThis.TES = { api, DEFAULTS, hasReason, keep, getSettings, commit, extractUsers, restUser, bottomCursor, waitMs, needsSync, merge };
+  globalThis.TES = { api, DEFAULTS, hasReason, keep, getSettings, commit, askToSend, maySend, extractUsers, restUser, bottomCursor, waitMs, needsSync, merge };
 })();
