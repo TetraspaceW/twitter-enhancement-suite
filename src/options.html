@@ -1,0 +1,45 @@
+<!doctype html>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twitter Enhancement Suite</title>
+<style>
+  :root { color-scheme: light dark; font: 15px/1.45 system-ui, sans-serif; }
+  body { max-width: 640px; margin: 0 auto; padding: 16px; }
+  h2 { margin: 28px 0 6px; font-size: 1.05em; }
+  label { display: block; margin: 8px 0; }
+  input:not([type=file]), textarea { box-sizing: border-box; width: 100%; padding: 6px; font: inherit; }
+  input.n { width: 5em; }
+  .muted { opacity: .7; font-size: .9em; }
+  button { font: inherit; padding: 4px 12px; }
+</style>
+
+<h1>Block reasons</h1>
+<p id="stats"></p>
+
+<h2>Reasons to choose from</h2>
+<p class="muted">One per line. Anyone blocked with at least one reason (or a note) is never mass-unblocked.</p>
+<textarea id="reasons" rows="7"></textarea>
+<button id="saveReasons">Save reasons</button> <span id="reasonsMsg" class="muted"></span>
+
+<h2>Sync between browsers</h2>
+<p class="muted">Reasons are kept in one secret gist on your GitHub account. Use the same token (a fine-grained
+  token with only the <b>Gists: read and write</b> permission) and passphrase on every device.
+  With a passphrase, the gist is encrypted before it leaves this browser.</p>
+<label>GitHub token <input id="token" type="password" autocomplete="off"></label>
+<label>Passphrase (optional) <input id="pass" type="password" autocomplete="off"></label>
+<button id="saveSync">Save and sync now</button> <span id="syncMsg" class="muted"></span>
+
+<h2>Unblock pacing</h2>
+<p class="muted">X starts refusing at about 10 unblocks per 45 s and 50 per 15 min.</p>
+<label>At most <input id="n0" class="n" type="number" min="1"> per <input id="w0" class="n" type="number" min="1"> seconds,
+  and <input id="n1" class="n" type="number" min="1"> per <input id="w1" class="n" type="number" min="1"> minutes</label>
+<button id="savePace">Save pacing</button> <span id="paceMsg" class="muted"></span>
+
+<h2>Backup</h2>
+<p class="muted">Removing the extension deletes its data, so export now and then.</p>
+<button id="export">Export</button>
+<label>Import (merges; newer edits win) <input id="import" type="file" accept=".json,application/json"></label>
+<span id="importMsg" class="muted"></span>
+
+<script src="lib.js"></script>
+<script src="options.js"></script>

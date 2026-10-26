@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Twitter Enhancement Suite",
+  "version": "0.1.0",
+  "description": "Remember why you blocked people on X, and mass-unblock the ones you didn't give a reason for.",
+  "permissions": ["storage", "alarms"],
+  "host_permissions": [
+    "https://x.com/*",
+    "https://mobile.x.com/*",
+    "https://twitter.com/*",
+    "https://mobile.twitter.com/*",
+    "https://api.github.com/*",
+    "https://gist.githubusercontent.com/*"
+  ],
+  "action": { "default_title": "Twitter Enhancement Suite settings" },
+  "options_ui": { "page": "options.html", "open_in_tab": true },
+  "content_scripts": [
+    {
+      "matches": ["https://x.com/*", "https://mobile.x.com/*", "https://twitter.com/*", "https://mobile.twitter.com/*"],
+      "js": ["page.js"],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": ["https://x.com/*", "https://mobile.x.com/*", "https://twitter.com/*", "https://mobile.twitter.com/*"],
+      "js": ["lib.js", "content.js"],
+      "css": ["content.css"],
+      "run_at": "document_start"
+    }
+  ]
+}

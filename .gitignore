@@ -1,0 +1,12 @@
+# node build.mjs
+dist/
+
+# npx web-ext sign
+web-ext-artifacts/
+.amo-upload-uuid
+*.xpi
+.env
+
+# Chromium packing (the .pem is the extension's private key)
+*.crx
+*.pem
