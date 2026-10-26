@@ -38,11 +38,13 @@ $('saveReasons').onclick = async () => {
 };
 
 $('saveSync').onclick = async () => {
-  const s = await TES.getSettings();
   const gistToken = $('token').value.trim(), passphrase = $('pass').value;
+  const asked = gistToken && TES.askToSend().catch(() => false); // before any await: see askToSend
+  const s = await TES.getSettings();
   // A different token may be a different GitHub account: look the gist up again.
   await update({ gistToken, passphrase, gistId: gistToken === s.gistToken ? s.gistId : '' });
   if (!gistToken) return status();
+  await asked; // if refused, the sync below fails and says why
   $('syncMsg').textContent = 'Syncing…';
   const r = await api.runtime.sendMessage({ type: 'sync' }).catch(e => ({ error: e.message }));
   $('syncMsg').textContent = r?.ok ? `Synced: pulled ${r.pulled} change(s)${r.pushed ? ', pushed yours' : ''}.` : `Sync failed: ${r?.error}`;
