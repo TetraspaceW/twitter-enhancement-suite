@@ -10,3 +10,6 @@ web-ext-artifacts/
 # Chromium packing (the .pem is the extension's private key)
 *.crx
 *.pem
+
+# claude
+.claude
