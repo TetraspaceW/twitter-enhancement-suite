@@ -1,4 +1,4 @@
-# Twitter Enhancement Suite
+# Enhancement Suite for Twitter
 
 Remembers why you blocked people on X, and mass-unblocks the ones you didn't give a reason for.
 
@@ -32,6 +32,33 @@ node build.mjs        # → dist/firefox, dist/brave, and a zip of each
 node --test test/     # unit tests
 ```
 
+## Publish
+
+Bump `"version"` in `manifest.base.json` (both stores refuse a version they've already seen), then:
+
+```sh
+node publish.mjs firefox "What changed"   # tests, builds, submits to addons.mozilla.org (notes optional)
+node publish.mjs chrome                   # tests, builds, submits to the Chrome Web Store for review
+```
+
+Each waits for its store to check the upload and prints how long it's taking. They only update an existing
+listing: submit the first version by hand on each store's site (listing, screenshots, privacy answers, and
+Android as well as Firefox on AMO). Credentials go in `.env`, which git ignores:
+
+```sh
+AMO_API_KEY=user:12345:67          # addons.mozilla.org/developers/addon/api/key/
+AMO_API_SECRET=…
+CWS_PUBLISHER_ID=…                 # Chrome Web Store dashboard → Publisher → Settings
+CWS_EXTENSION_ID=…                 # the item's ID, once the first version is up
+CWS_SERVICE_ACCOUNT_KEY=/home/you/.config/tes-cws-key.json   # keep the key out of the repo
+```
+
+For the Chrome key: in Google Cloud, create a project, enable the *Chrome Web Store API*, create a service account
+with no roles and download a JSON key for it, then add the service account's email under *Account* in the
+Chrome Web Store dashboard.
+
+The privacy policy both stores ask for is [PRIVACY.md](PRIVACY.md).
+
 ## Install
 
 **Firefox (desktop or Android):** `about:debugging#/runtime/this-firefox` → *Load Temporary Add-on…* →
@@ -50,8 +77,8 @@ Firefox for Android takes the Firefox build.
 
 Settings (toolbar button) → *Sync between browsers*. Create a fine-grained GitHub token with only the
 **Gists: read and write** account permission, paste it into each browser, and use the same passphrase everywhere
-if you want the gist encrypted (AES-GCM, key from PBKDF2). The first device creates a secret gist; the others find
-it. Each person's reason is merged by last edit wins. Only accounts with reasons are synced: each device learns
+if you want the gist encrypted (AES-GCM, key from PBKDF2). Firefox asks your permission to send block reasons to
+GitHub the first time you press *Save and sync now*. The first device creates a secret gist; the others find it. Each person's reason is merged by last edit wins. Only accounts with reasons are synced: each device learns
 the block list itself from X. Before a mass unblock, the extension syncs first and refuses to start if that fails,
 so nobody you tagged on another device gets unblocked.
 
@@ -69,3 +96,4 @@ Removing the extension deletes its data. Settings → *Export* saves everything 
 | `src/bg.js` | background | Toolbar button, gist sync |
 | `src/options.*` | settings page | Reasons list, sync, pacing, backup |
 | `manifest.base.json`, `build.mjs` | — | Shared manifest; per-browser tweaks |
+| `publish.mjs` | — | Submits a build to addons.mozilla.org or the Chrome Web Store |

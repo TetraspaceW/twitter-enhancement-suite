@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Twitter Enhancement Suite",
+  "name": "Enhancement Suite for Twitter",
   "version": "0.1.0",
   "description": "Remember why you blocked people on X, and mass-unblock the ones you didn't give a reason for.",
   "permissions": ["storage", "alarms"],
@@ -12,7 +12,7 @@
     "https://api.github.com/*",
     "https://gist.githubusercontent.com/*"
   ],
-  "action": { "default_title": "Twitter Enhancement Suite settings" },
+  "action": { "default_title": "Enhancement Suite for Twitter settings" },
   "options_ui": { "page": "options.html", "open_in_tab": true },
   "content_scripts": [
     {

@@ -40,6 +40,7 @@ async function run() {
   const all = await api.storage.local.get(null);
   const s = { ...TES.DEFAULTS, ...all.settings };
   if (!s.gistToken) return { skipped: true };
+  if (!(await TES.maySend())) throw new Error('Firefox hasn’t been allowed to send block reasons to GitHub: press Save and sync now to allow it.');
 
   const gh = async (path, init = {}) => {
     const r = await fetch('https://api.github.com' + path, {
@@ -79,7 +80,7 @@ async function run() {
   if (!gist || dirty || remote.rt < rt) {
     const content = await encode({ v: 1, reasons, rt, users: merged }, s.passphrase);
     const body = JSON.stringify({
-      description: 'Twitter Enhancement Suite: block reasons',
+      description: 'Enhancement Suite for Twitter: block reasons',
       public: false,
       files: { [FILE]: { content } },
     });
