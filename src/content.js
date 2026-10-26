@@ -468,10 +468,14 @@ async function unblockAll() {
     const left = unreasoned(tried).length;
     job.total = job.done + left;
     const progress = `${job.done} of ${job.total}${scannedAt ? '' : '+'} unblocked`;
-    const wait = Math.max(waitMs(ulog, Date.now(), settings.limits), pauseUntil - Date.now());
+    const now = Date.now(), limited = waitMs(ulog, now, settings.limits), wait = Math.max(limited, pauseUntil - now);
     if (wait > 0) {
+      // A long wait is either X refusing (429) or the pacing limit, which counts earlier runs too.
+      const [n, win] = settings.limits.at(-1);
+      const why = pauseUntil - now >= limited ? 'X refused the last one'
+        : `${ulog.filter(t => t > now - win).length} of ${n} unblocks per ${win / 60e3} min used, earlier runs included`;
       say(`${progress} · ` +
-        (wait > 90e3 ? `paused until ${clock(Date.now() + wait)}` : `next in ${Math.ceil(wait / 1e3)} s`) +
+        (wait > 90e3 ? `paused until ${clock(now + wait)} (${why})` : `next in ${Math.ceil(wait / 1e3)} s`) +
         ` · ≈${eta(left)} to go`);
       await pause(Date.now() + Math.min(wait, 1e3));
       continue;
